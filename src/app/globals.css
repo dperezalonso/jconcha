@@ -1,0 +1,939 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Javier Concha — sistema visual "Luz & Ember"
+   Base clara (papel / piedra fría), acento ember, tipografía expresiva.
+   Los paneles oscuros usan .on-ink.
+   ========================================================================== */
+
+:root {
+  /* Materia */
+  --void: #0c0e14;
+  --void-2: #141821;
+  --panel: #f3f1eb;
+  --bone: #f7f5f0;
+  --bone-2: #ebe8e1;
+
+  /* Marca */
+  --ember: #e03d0f;
+  --ember-soft: #ff6a33;
+  --amber: #f0a020;
+  --abyss: #1a6b74;
+
+  /* Semánticos (modo claro por defecto) */
+  --surface: var(--bone);
+  --fg: #12151c;
+  --fg-soft: #3d4454;
+  --fg-muted: #6b7285;
+  --hairline: color-mix(in oklab, #12151c 12%, transparent);
+  --hairline-strong: color-mix(in oklab, #12151c 26%, transparent);
+  --accent: var(--ember);
+
+  --grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+
+  --shell: 1560px;
+  --gutter: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: 2.5rem;
+  }
+}
+
+/* Paneles oscuros: mismos componentes, tokens invertidos */
+.on-ink {
+  --surface: var(--void);
+  --fg: #f3f1eb;
+  --fg-soft: color-mix(in oklab, #f3f1eb 78%, transparent);
+  --fg-muted: color-mix(in oklab, #f3f1eb 58%, transparent);
+  --ember: #ff5a28;
+  --hairline: color-mix(in oklab, #f3f1eb 14%, transparent);
+  --hairline-strong: color-mix(in oklab, #f3f1eb 28%, transparent);
+  background: var(--surface);
+  color: var(--fg);
+}
+
+/* Alias legacy: paneles que antes eran “claros sobre oscuro” */
+.on-bone {
+  --surface: var(--bone-2);
+  --fg: #12151c;
+  --fg-soft: #3d4454;
+  --fg-muted: #6b7285;
+  --ember: #e03d0f;
+  --hairline: color-mix(in oklab, #12151c 12%, transparent);
+  --hairline-strong: color-mix(in oklab, #12151c 26%, transparent);
+  background: var(--surface);
+  color: var(--fg);
+}
+
+@theme inline {
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-fg-soft: var(--fg-soft);
+  --color-fg-muted: var(--fg-muted);
+  --color-hairline: var(--hairline);
+  --color-hairline-strong: var(--hairline-strong);
+  --color-ember: var(--ember);
+  --color-ember-soft: var(--ember-soft);
+  --color-amber: var(--amber);
+  --color-bone: var(--bone);
+  --color-void: var(--void);
+  --color-panel: var(--panel);
+
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+* {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--bone);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bone);
+  color: var(--fg);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+@layer base {
+  a {
+    color: inherit;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+}
+
+nav.lang-switch a {
+  color: var(--fg-muted);
+}
+
+nav.lang-switch a[aria-current="page"] {
+  color: var(--ember);
+}
+
+nav.lang-switch a:hover {
+  color: var(--fg);
+}
+
+nav.lang-switch a[aria-current="page"]:hover {
+  color: var(--ember);
+}
+
+::selection {
+  background: var(--ember);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ember-soft);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   Tipografía
+   -------------------------------------------------------------------------- */
+
+.display {
+  font-family: var(--font-display), var(--font-sans), sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.94;
+  font-variation-settings: "opsz" 40;
+}
+
+.mono {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+.balance {
+  text-wrap: balance;
+}
+
+/* --------------------------------------------------------------------------
+   Atmósfera: campo de gradientes + grano + retícula
+   -------------------------------------------------------------------------- */
+
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  background-image: var(--grain);
+  mix-blend-mode: overlay;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image: var(--grain);
+  mix-blend-mode: multiply;
+}
+
+.field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.field-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  will-change: transform;
+}
+
+.blob-ember {
+  background: radial-gradient(
+    circle at center,
+    rgba(224, 61, 15, 0.28),
+    rgba(224, 61, 15, 0) 68%
+  );
+}
+
+.blob-amber {
+  background: radial-gradient(
+    circle at center,
+    rgba(240, 160, 32, 0.22),
+    rgba(240, 160, 32, 0) 70%
+  );
+}
+
+.blob-abyss {
+  background: radial-gradient(
+    circle at center,
+    rgba(26, 107, 116, 0.22),
+    rgba(26, 107, 116, 0) 70%
+  );
+}
+
+/* Horizonte solar: plano visual dominante del hero (versión luz) */
+.solar-horizon {
+  position: absolute;
+  left: 50%;
+  bottom: -36vh;
+  width: min(172vw, 2000px);
+  height: min(86vh, 900px);
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgba(240, 160, 32, 0.35) 0%,
+    rgba(224, 61, 15, 0.22) 44%,
+    rgba(224, 61, 15, 0.08) 68%,
+    rgba(247, 245, 240, 0) 84%
+  );
+  filter: blur(10px);
+}
+
+.mesh {
+  background-image:
+    linear-gradient(var(--hairline) 1px, transparent 1px),
+    linear-gradient(90deg, var(--hairline) 1px, transparent 1px);
+  background-size: 96px 96px;
+  mask-image: radial-gradient(
+    ellipse 80% 65% at 50% 35%,
+    #000 0%,
+    transparent 78%
+  );
+  opacity: 0.45;
+}
+
+.vignette {
+  background: radial-gradient(
+    ellipse 100% 80% at 50% 45%,
+    transparent 50%,
+    color-mix(in oklab, var(--surface) 70%, transparent) 100%
+  );
+}
+
+/* --------------------------------------------------------------------------
+   Movimiento 1 · foco que sigue al cursor (hero)
+   -------------------------------------------------------------------------- */
+
+.spot-field {
+  --mx: 50%;
+  --my: 42%;
+  touch-action: pan-y;
+}
+
+.spot-light {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(
+    460px circle at var(--mx) var(--my),
+    rgba(224, 61, 15, 0.14),
+    transparent 72%
+  );
+  transition: opacity 0.4s ease;
+}
+
+/* Imán 3D: una C geométrica que concentra el campo de partículas. */
+.hero-magnet {
+  --magnet-x: 0px;
+  --magnet-y: 0px;
+  --magnet-rx: -3deg;
+  --magnet-ry: 7deg;
+  --magnet-rz: -2deg;
+  position: absolute;
+  z-index: 3;
+  top: 43%;
+  left: 78%;
+  width: clamp(11rem, 19vw, 16rem);
+  aspect-ratio: 310 / 292;
+  translate: -50% -50%;
+  transform: translate3d(var(--magnet-x), var(--magnet-y), 0);
+  perspective: 900px;
+  pointer-events: none;
+  opacity: 0.84;
+  transition:
+    opacity 500ms ease,
+    filter 500ms ease;
+  filter: saturate(0.94);
+  will-change: transform;
+}
+
+.hero-magnet-stage {
+  width: 100%;
+  height: 100%;
+  transform:
+    rotateX(var(--magnet-rx))
+    rotateY(var(--magnet-ry))
+    rotateZ(var(--magnet-rz));
+  transform-style: preserve-3d;
+  transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.hero-magnet-stage > svg {
+  overflow: visible;
+  animation: magnet-hover 5.5s ease-in-out infinite;
+}
+
+.magnet-is-active .hero-magnet {
+  opacity: 1;
+  filter: saturate(1.08);
+}
+
+.hero-magnet-field-lines {
+  fill: none;
+  stroke: rgba(224, 61, 15, 0.42);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 5 8;
+  animation: magnet-field 2.8s linear infinite;
+}
+
+@keyframes magnet-hover {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes magnet-field {
+  to {
+    stroke-dashoffset: -26;
+  }
+}
+
+/* En móvil el imán vive en un pozo vacío; en desktop se suelta al hero. */
+.hero-stage {
+  position: relative;
+  min-height: clamp(9.5rem, 32svh, 14rem);
+}
+
+@media (min-width: 768px) {
+  .hero-stage {
+    display: contents;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-magnet {
+    top: 50%;
+    left: auto;
+    right: 0.1rem;
+    translate: 0 -50%;
+    width: clamp(8.6rem, 48vw, 12rem);
+    opacity: 0.96;
+    z-index: 4;
+  }
+
+  .hero-magnet-field-lines {
+    opacity: 0.75;
+  }
+
+  .hero-home .wordmark {
+    font-size: clamp(2.7rem, 13vw, 3.55rem);
+  }
+
+  .hero-home .scroll-cue {
+    align-items: flex-end;
+  }
+
+  .hero-home .scroll-cue-line {
+    height: 3.6rem;
+  }
+}
+
+/* Cruz ember anclada a la esquina del primer item: es la intersección real. */
+.focus-cross {
+  position: relative;
+  isolation: isolate;
+}
+
+@media (min-width: 640px) {
+  .focus-cross > li {
+    position: relative;
+    z-index: 1;
+  }
+
+  .focus-cross > li:first-child {
+    z-index: 2;
+  }
+
+  .focus-cross > li:first-child::before,
+  .focus-cross > li:first-child::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 4;
+    pointer-events: none;
+    background: var(--ember);
+    translate: 50% 50%;
+  }
+
+  .focus-cross > li:first-child::before {
+    width: 1.85rem;
+    height: 2px;
+  }
+
+  .focus-cross > li:first-child::after {
+    width: 2px;
+    height: 1.85rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Wordmark — legible sobre fondo claro
+   -------------------------------------------------------------------------- */
+
+.logo-name {
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.16em;
+  text-transform: lowercase;
+}
+
+/* Lockup final: módulo JC apaisado y nombre centrado en su altura. */
+.logo-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.62rem;
+}
+
+.logo-lockup--inverse {
+  color: var(--fg);
+}
+
+.logo-lockup--inverse .logo-stack-javier {
+  color: #f7f5f0;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  line-height: 0;
+}
+
+.logo-mark {
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.logo-stack-concha {
+  color: var(--ember);
+}
+
+.logo-stack {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.12rem;
+  min-width: 6.6rem;
+  height: 2.5rem;
+  font-family: var(--font-logo), var(--font-display), sans-serif;
+  text-transform: uppercase;
+  font-weight: 400;
+  font-size: 1.12rem;
+  line-height: 0.86;
+  letter-spacing: -0.01em;
+}
+
+.logo-stack > span {
+  display: block;
+  width: max-content;
+}
+
+.wordmark {
+  font-family: var(--font-logo), var(--font-display), sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 0.84;
+  text-transform: uppercase;
+  font-size: clamp(2.6rem, min(12.8vw, 17.5svh), 9.6rem);
+}
+
+.wordmark-line {
+  display: block;
+  white-space: nowrap;
+}
+
+/* Javier: negro sólido */
+.wordmark-solid {
+  color: #12151c;
+}
+
+/* Concha: ember sólido */
+.wordmark-accent {
+  color: #e03d0f;
+}
+
+@keyframes letter-in {
+  from {
+    opacity: 0.15;
+    transform: translateY(0.22em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes line-wipe {
+  from {
+    clip-path: inset(0 0 70% 0);
+    opacity: 0.35;
+  }
+  to {
+    clip-path: inset(-8% -4% -8% -4%);
+    opacity: 1;
+  }
+}
+
+@keyframes sweep {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Movimiento 2 · revelado al hacer scroll
+   -------------------------------------------------------------------------- */
+
+.reveal {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+.reveal[data-reveal="wait"] {
+  opacity: 0;
+  transform: translateY(1.6rem);
+  filter: blur(6px);
+  transition:
+    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.9s ease;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal[data-reveal="in"] {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
+
+.intro {
+  opacity: 1;
+  transform: none;
+}
+
+html.js .intro {
+  animation: rise 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--intro-delay, 0ms);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Movimiento 3 · marquesinas infinitas
+   -------------------------------------------------------------------------- */
+
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--marquee-duration, 42s) linear infinite;
+}
+
+.marquee-reverse {
+  animation-direction: reverse;
+}
+
+.marquee-host:hover .marquee,
+.marquee-paused {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.edge-fade {
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 7%,
+    #000 93%,
+    transparent
+  );
+}
+
+/* --------------------------------------------------------------------------
+   Movimiento 4 · deriva atmosférica
+   -------------------------------------------------------------------------- */
+
+@keyframes drift-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(6%, -8%, 0) scale(1.14);
+  }
+}
+
+@keyframes drift-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.06);
+  }
+  50% {
+    transform: translate3d(-8%, 6%, 0) scale(0.94);
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.drift-a {
+  animation: drift-a 22s ease-in-out infinite;
+}
+
+.drift-b {
+  animation: drift-b 28s ease-in-out infinite;
+}
+
+.pulse-soft {
+  animation: pulse-soft 3.4s ease-in-out infinite;
+}
+
+/* Scroll cue (hero) — estilo founder site */
+.scroll-cue {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.scroll-cue-line {
+  display: block;
+  width: 1px;
+  height: 2.4rem;
+  background: linear-gradient(
+    to bottom,
+    var(--ember),
+    transparent
+  );
+  animation: scroll-line 1.8s ease-in-out infinite;
+}
+
+@keyframes scroll-line {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scaleY(0.55);
+    transform-origin: top;
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Movimiento 5 · barra de progreso ligada al scroll (CSS puro)
+   -------------------------------------------------------------------------- */
+
+.scroll-progress {
+  transform-origin: 0 50%;
+  scale: 0 1;
+}
+
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    animation: progress linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes progress {
+  from {
+    scale: 0 1;
+  }
+  to {
+    scale: 1 1;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Piezas de interfaz
+   -------------------------------------------------------------------------- */
+
+.shell {
+  width: 100%;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.95rem 1.6rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    color 0.35s ease,
+    border-color 0.35s ease,
+    transform 0.25s ease;
+}
+
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: translateY(101%);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn:hover::before,
+.btn:focus-visible::before {
+  transform: translateY(0);
+}
+
+.btn-solid {
+  background: var(--ember);
+  color: #fff;
+}
+
+.btn-solid::before {
+  background: var(--fg);
+}
+
+.btn-solid:hover,
+.btn-solid:focus-visible {
+  color: var(--surface);
+}
+
+.btn-ghost {
+  border: 1px solid var(--hairline-strong);
+  color: var(--fg);
+}
+
+.btn-ghost::before {
+  background: var(--fg);
+}
+
+.btn-ghost:hover,
+.btn-ghost:focus-visible {
+  color: var(--surface);
+  border-color: var(--fg);
+}
+
+.rule {
+  height: 1px;
+  background: var(--hairline);
+}
+
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  text-decoration: none;
+  transition: background-size 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.link-underline:hover {
+  background-size: 100% 1px;
+}
+
+/* Fila de índice expansiva (expertise) */
+.index-row {
+  transition:
+    background-color 0.5s ease,
+    padding 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.index-row:hover {
+  background: color-mix(in oklab, var(--fg) 4%, transparent);
+}
+
+.index-row .index-num {
+  transition:
+    color 0.4s ease,
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.index-row:hover .index-num {
+  color: var(--ember);
+  transform: translateX(0.35rem);
+}
+
+.index-row .index-arrow {
+  opacity: 0;
+  transform: translateX(-0.6rem);
+  transition:
+    opacity 0.4s ease,
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.index-row:hover .index-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Magnético */
+.magnetic {
+  will-change: transform;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.magnetic.is-dragging {
+  transition: transform 0.08s linear;
+}
+
+/* --------------------------------------------------------------------------
+   Accesibilidad
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .marquee,
+  .drift-a,
+  .drift-b,
+  .pulse-soft,
+  .wordmark-solid,
+  .wordmark-accent,
+  .intro,
+  .scroll-progress,
+  .scroll-cue-line {
+    animation: none !important;
+  }
+
+  .scroll-progress {
+    scale: 1 1;
+  }
+
+  .hero-magnet,
+  .hero-magnet-stage {
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .hero-magnet-stage > svg,
+  .hero-magnet-field-lines {
+    animation: none !important;
+  }
+
+  .reveal,
+  .reveal[data-reveal="wait"],
+  .reveal[data-reveal="in"] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+
+  .magnetic {
+    transform: none !important;
+  }
+}
